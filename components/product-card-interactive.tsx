@@ -1,10 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { Search, Bell, Settings, FileText, ClipboardList, History, ChevronDown, Edit, Trash2 } from 'lucide-react'
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 
+type CartItem = {
+  id: string
+  name: string
+  quantity: number
+  size: string
+  toppings: string
+  image: string
+}
+
 export default function ProductCardInteractive({ name = "Unnamed Product", image = "/placeholder.svg" }) {
-    const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(0);
   const [selectedSize, setSelectedSize] = useState("No")
   const sizes = ["No", "Mini", "S", "M", "L"]
 

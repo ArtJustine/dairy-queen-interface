@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { Search, Bell, Settings, FileText, ClipboardList, History, ChevronDown, Edit, Trash2 } from "lucide-react"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, KeyboardEvent } from "react"
 
 export default function OrderInterface() {
   const [timePickerOpen, setTimePickerOpen] = useState(false)
@@ -114,77 +114,128 @@ export default function OrderInterface() {
             </div>
 
             {timePickerOpen && (
-              <div
-                ref={timePickerRef}
-                className="absolute top-full left-0 mt-1 bg-white border border-[#eaf2fa] rounded-md shadow-md z-10 p-3 w-[280px]"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-medium text-[#123358]">Select Time</h3>
-                  <button className="text-[#777777] hover:text-[#123358]" onClick={() => setTimePickerOpen(false)}>
-                    ✕
-                  </button>
-                </div>
+  <div
+    ref={timePickerRef}
+    className="absolute top-full left-0 mt-1 bg-white border border-[#eaf2fa] rounded-md shadow-md z-10 p-3 w-[280px]"
+  >
+    <div className="flex justify-between items-center mb-3">
+      <h3 className="text-sm font-medium text-[#123358]">Select Time</h3>
+      <button className="text-[#777777] hover:text-[#123358]" onClick={() => setTimePickerOpen(false)}>
+        ✕
+      </button>
+    </div>
 
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Hour</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 24 }).map((_, i) => (
-                        <div
-                          key={`hour-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedHour === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedHour(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+    {/* Manual input section */}
+    <div className="mb-3">
+      <label className="block text-xs text-[#777777] mb-1">Enter Time Manually</label>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          min="0"
+          max="23"
+          value={selectedHour}
+          onChange={(e) => setSelectedHour(Math.min(23, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="HH"
+        />
+        <span className="text-[#123358] self-center">:</span>
+        <input
+          type="number"
+          min="0"
+          max="59"
+          value={selectedMinute}
+          onChange={(e) => setSelectedMinute(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="MM"
+        />
+        <span className="text-[#123358] self-center">:</span>
+        <input
+          type="number"
+          min="0"
+          max="59"
+          value={selectedSecond}
+          onChange={(e) => setSelectedSecond(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="SS"
+        />
+      </div>
+    </div>
 
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Minute</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 60 }).map((_, i) => (
-                        <div
-                          key={`minute-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedMinute === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedMinute(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+    <div className="flex gap-2">
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Hour</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={`hour-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedHour === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedHour(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
 
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Second</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 60 }).map((_, i) => (
-                        <div
-                          key={`second-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedSecond === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedSecond(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Minute</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <div
+              key={`minute-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedMinute === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedMinute(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
 
-                <div className="mt-3 flex justify-end">
-                  <button className="px-4 py-1 bg-[#123358] text-white rounded-md text-sm" onClick={applySelectedTime}>
-                    Apply
-                  </button>
-                </div>
-              </div>
-            )}
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Second</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <div
+              key={`second-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedSecond === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedSecond(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-3 flex justify-end">
+      <button className="px-4 py-1 bg-[#123358] text-white rounded-md text-sm" onClick={applySelectedTime}>
+        Apply
+      </button>
+    </div>
+  </div>
+)}
           </div>
           <div className="relative">
             <div
@@ -199,80 +250,131 @@ export default function OrderInterface() {
             </div>
 
             {endTimePickerOpen && (
-              <div
-                ref={endTimePickerRef}
-                className="absolute top-full left-0 mt-1 bg-white border border-[#eaf2fa] rounded-md shadow-md z-10 p-3 w-[280px]"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-medium text-[#123358]">Select Time</h3>
-                  <button className="text-[#777777] hover:text-[#123358]" onClick={() => setEndTimePickerOpen(false)}>
-                    ✕
-                  </button>
-                </div>
+  <div
+    ref={endTimePickerRef}
+    className="absolute top-full left-0 mt-1 bg-white border border-[#eaf2fa] rounded-md shadow-md z-10 p-3 w-[280px]"
+  >
+    <div className="flex justify-between items-center mb-3">
+      <h3 className="text-sm font-medium text-[#123358]">Select Time</h3>
+      <button className="text-[#777777] hover:text-[#123358]" onClick={() => setEndTimePickerOpen(false)}>
+        ✕
+      </button>
+    </div>
 
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Hour</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 24 }).map((_, i) => (
-                        <div
-                          key={`end-hour-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedEndHour === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedEndHour(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+    {/* Manual input section */}
+    <div className="mb-3">
+      <label className="block text-xs text-[#777777] mb-1">Enter Time Manually</label>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          min="0"
+          max="23"
+          value={selectedEndHour}
+          onChange={(e) => setSelectedEndHour(Math.min(23, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedEndTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="HH"
+        />
+        <span className="text-[#123358] self-center">:</span>
+        <input
+          type="number"
+          min="0"
+          max="59"
+          value={selectedEndMinute}
+          onChange={(e) => setSelectedEndMinute(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedEndTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="MM"
+        />
+        <span className="text-[#123358] self-center">:</span>
+        <input
+          type="number"
+          min="0"
+          max="59"
+          value={selectedEndSecond}
+          onChange={(e) => setSelectedEndSecond(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              applySelectedEndTime()
+            }
+          }}
+          className="flex-1 border border-[#eaf2fa] rounded-md px-2 py-1 text-sm text-center"
+          placeholder="SS"
+        />
+      </div>
+    </div>
 
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Minute</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 60 }).map((_, i) => (
-                        <div
-                          key={`end-minute-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedEndMinute === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedEndMinute(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+    <div className="flex gap-2">
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Hour</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={`end-hour-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedEndHour === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedEndHour(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
 
-                  <div className="flex-1">
-                    <label className="block text-xs text-[#777777] mb-1">Second</label>
-                    <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
-                      {Array.from({ length: 60 }).map((_, i) => (
-                        <div
-                          key={`end-second-${i}`}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
-                            selectedEndSecond === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
-                          }`}
-                          onClick={() => setSelectedEndSecond(i)}
-                        >
-                          {i.toString().padStart(2, "0")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Minute</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <div
+              key={`end-minute-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedEndMinute === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedEndMinute(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
 
-                <div className="mt-3 flex justify-end">
-                  <button
-                    className="px-4 py-1 bg-[#123358] text-white rounded-md text-sm"
-                    onClick={applySelectedEndTime}
-                  >
-                    Apply
-                  </button>
-                </div>
-              </div>
-            )}
+      <div className="flex-1">
+        <label className="block text-xs text-[#777777] mb-1">Second</label>
+        <div className="border border-[#eaf2fa] rounded-md h-[120px] overflow-y-auto">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <div
+              key={`end-second-${i}`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#eaf2fa] ${
+                selectedEndSecond === i ? "bg-[#eaf2fa] text-[#123358] font-medium" : ""
+              }`}
+              onClick={() => setSelectedEndSecond(i)}
+            >
+              {i.toString().padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-3 flex justify-end">
+      <button
+        className="px-4 py-1 bg-[#123358] text-white rounded-md text-sm"
+        onClick={applySelectedEndTime}
+      >
+        Apply
+      </button>
+    </div>
+  </div>
+)}
           </div>
           <div className="flex-1"></div>
           <div className="flex items-center border rounded-md px-3 py-2 bg-white">
